@@ -2,9 +2,11 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { dataService } from './services/getData';
 import MainChart from './components/MainChart.vue';
-import { IGivenTicketsByBranchGraphItem } from './types/data.interface';
+import MainTable from './components/MainTable.vue';
+import { BranchInfo, IGivenTicketsByBranchGraphItem } from './types/data.interface';
 
 const chartData = ref<IGivenTicketsByBranchGraphItem[]>([])
+const tableData = ref<BranchInfo[]>([])
 const loading = ref(false)
 const errorMessage = ref('')
 const timer = ref(10)
@@ -19,6 +21,7 @@ const fetchData = async () => {
       errorMessage.value = result.msg
     } else {
       chartData.value = result.givenTicketsByBranchGraph.items
+      tableData.value = result.branchInfos
     }
   } catch (error) {
     console.error('Ошибка при запросе:', error)
@@ -63,7 +66,8 @@ onUnmounted(() => {
     <div>
       <p>Таймер: {{ timer }} сек.</p>
       <p v-if="loading">Запрос отправляется...</p>
-      <MainChart v-else :chart-data="chartData" />
+      <!-- <MainChart v-else :chart-data="chartData" /> -->
+      <MainTable v-else :tableData="tableData" />
     </div>
   </div>
 </template>
