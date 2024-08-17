@@ -18,8 +18,10 @@ export interface BranchInfo {
   givenTickets: number;
   missingClients: number;
   servedTaskCount: number;
-  serviceData?: BranchInfo[];
-  serviceName?: string;
+  serviceData?: ServiceData[];
+}
+export interface ServiceData extends Omit<BranchInfo, "serviceData"> {
+  serviceName: string;
 }
 
 export interface GivenTicketsByBranchGraph {

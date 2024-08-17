@@ -11,7 +11,7 @@ const loading = ref(false)
 const errorMessage = ref('')
 const timer = ref(10)
 let intervalId: any = null
-let nextRequestTimeout = 10_000
+let nextRequestTimeout = 10000
 
 const fetchData = async () => {
   loading.value = true
@@ -31,26 +31,32 @@ const fetchData = async () => {
   }
 }
 
-const startPolling = () => {
-  fetchData()
-  intervalId = setInterval(fetchData, nextRequestTimeout)
-}
-
-const stopPolling = () => {
-  clearInterval(intervalId)
-}
-
 const resetTimer = () => {
   timer.value = nextRequestTimeout / 1000
 }
 
-onMounted(() => {
-  fetchData(); // Немедленный запуск первого запроса
+const startTimer = () => {
+  const interval = setInterval(() => {
+    timer.value--;
+
+    if (timer.value < 0) {
+      resetTimer()
+      clearInterval(interval);
+    }
+  }, 1000);
+
+  return interval
+}
+
+onMounted(async () => {
+  await fetchData();
+  startTimer()
   // intervalId = setInterval(() => {
   //   if (!loading.value) {
-  //     fetchData();
+  //     fetchData().then(() => startTimer())
+
   //   }
-  // }, 10000);
+  // }, nextRequestTimeout);
 });
 
 onUnmounted(() => {
