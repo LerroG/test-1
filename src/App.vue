@@ -3,28 +3,39 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { dataService } from './services/getData';
 import MainChart from './components/MainChart.vue';
 import MainTable from './components/MainTable.vue';
+import Toaster from '@/components/ui/toast/Toaster.vue'
+import { useToast } from '@/components/ui/toast/use-toast'
 import { BranchInfo, IGivenTicketsByBranchGraphItem } from './types/data.interface';
 
 const chartData = ref<IGivenTicketsByBranchGraphItem[]>([])
 const tableData = ref<BranchInfo[]>([])
 const loading = ref(false)
-const errorMessage = ref('')
 const timer = ref(10)
 let intervalId: any = null
 let nextRequestTimeout = 10000
+const { toast } = useToast()
 
 const fetchData = async () => {
   loading.value = true
   try {
     const result = await dataService.getData()
     if (result.code < 0) {
-      errorMessage.value = result.msg
+      toast({
+        title: 'Произошла ошибка',
+        description: result.msg
+      });
     } else {
       chartData.value = result.givenTicketsByBranchGraph.items
       tableData.value = result.branchInfos
     }
   } catch (error) {
     console.error('Ошибка при запросе:', error)
+    toast({
+      variant: "destructive",
+      title: 'Произошла ошибка',
+      description: error as string
+    });
+
   } finally {
     loading.value = false
     resetTimer()
@@ -67,13 +78,17 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <Toaster />
   <div class="wrapper">
-    <h1>Автоматические запросы</h1>
     <div>
-      <p>Таймер: {{ timer }} сек.</p>
+      <p class="mb-4 border-2 rounded-md border-gray-400 w-fit p-2">Следующее обновление данных через: <span
+          class="font-bold">{{ timer }}</span>
+        сек.</p>
       <p v-if="loading">Запрос отправляется...</p>
-      <!-- <MainChart v-else :chart-data="chartData" /> -->
-      <MainTable v-else :tableData="tableData" />
+      <template v-else>
+        <MainChart class="mb-10" :chart-data="chartData" />
+        <MainTable :tableData="tableData" />
+      </template>
     </div>
   </div>
 </template>

@@ -13,7 +13,7 @@ const dataOutput = props.chartData.map(item => {
     BranchName: item.BranchName,
     [ticketCount]: item.TicketCount,
     [ticketCountPercent]: Math.round((Number(item.TicketCountPercent.slice(0, -2)) / 100) * item.TicketCount)
-  }
+  } || []
 })
 </script>
 

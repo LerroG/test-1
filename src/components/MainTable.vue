@@ -15,9 +15,8 @@ import {
 import { ChevronDown } from 'lucide-vue-next'
 import { BranchInfo } from '@/types/data.interface';
 
-const props = defineProps<{ tableData: BranchInfo[] }>()
+defineProps<{ tableData: BranchInfo[] }>()
 
-const keys = ['branchName', '', 'givenTickets', 'servedTaskCount', 'avgWaitTime', 'avgAdminTime', 'missingClients']
 </script>
 
 <template>
@@ -38,7 +37,7 @@ const keys = ['branchName', '', 'givenTickets', 'servedTaskCount', 'avgWaitTime'
         <TableHead class="text-center">
           Ср. время обслуживания
         </TableHead>
-        <TableHead>
+        <TableHead class="text-center">
           Потеряно билетов
         </TableHead>
       </TableRow>
@@ -53,47 +52,34 @@ const keys = ['branchName', '', 'givenTickets', 'servedTaskCount', 'avgWaitTime'
                 {{ item.branchName }}
               </div>
             </TableCell>
-            <TableCell>
+            <TableCell class="w-2/5">
             </TableCell>
-            <TableCell>{{ item.givenTickets }}
+            <TableCell class="text-center">{{ item.givenTickets }}
             </TableCell>
-            <TableCell>{{ item.servedTaskCount }}
+            <TableCell class="text-center">{{ item.servedTaskCount }}
             </TableCell>
-            <TableCell>{{ item.avgWaitTime }}
+            <TableCell class="text-center">{{ item.avgWaitTime }}
             </TableCell>
-            <TableCell>{{ item.avgAdminTime }}
+            <TableCell class="text-center">{{ item.avgAdminTime }}
             </TableCell>
-            <TableCell>{{ item.missingClients }}
+            <TableCell class="text-center">{{ item.missingClients }}
             </TableCell>
           </TableRow>
+          <CollapsibleContent as-child>
+            <TableRow v-for="data in item.serviceData">
+              <TableCell>{{ data.branchName }}</TableCell>
+              <TableCell>{{ data.serviceName }}</TableCell>
+              <TableCell class="text-center">{{ data.givenTickets }}</TableCell>
+              <TableCell class="text-center">{{ data.servedTaskCount }}</TableCell>
+              <TableCell class="text-center">{{ data.avgWaitTime }}</TableCell>
+              <TableCell class="text-center">{{ data.avgAdminTime }}</TableCell>
+              <TableCell class="text-center">{{ data.missingClients }}</TableCell>
+            </TableRow>
+          </CollapsibleContent>
         </CollapsibleTrigger>
-        <CollapsibleContent as-child>
-          <TableRow v-for="data in item.serviceData">
-            <TableCell>{{ data.branchName }}</TableCell>
-            <TableCell>{{ data.serviceName }}</TableCell>
-            <TableCell>{{ data.givenTickets }}</TableCell>
-            <TableCell>{{ data.servedTaskCount }}</TableCell>
-            <TableCell>{{ data.avgWaitTime }}</TableCell>
-            <TableCell>{{ data.avgAdminTime }}</TableCell>
-            <TableCell>{{ data.missingClients }}</TableCell>
-          </TableRow>
-        </CollapsibleContent>
       </Collapsible>
     </TableBody>
   </Table>
-
-  <!-- <Accordion type="multiple" class="w-full">
-    <AccordionItem v-for="item, idx in tableData" :key="idx" :value="item.branchName">
-      <AccordionTrigger>
-        <div class="accordion_trigger">
-          <div class="accordion_trigger_cell" v-for="key in keys" :key="key">{{ item[key as keyof BranchInfo] }}</div>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent>
-        {{ item.content }}
-      </AccordionContent>
-    </AccordionItem>
-  </Accordion> -->
 </template>
 
 <style scoped>
