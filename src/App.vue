@@ -5,6 +5,8 @@ import MainChart from './components/MainChart.vue';
 import MainTable from './components/MainTable.vue';
 import Toaster from '@/components/ui/toast/Toaster.vue'
 import { useToast } from '@/components/ui/toast/use-toast'
+import { VueSpinner } from 'vue3-spinners';
+import { Skeleton } from '@/components/ui/skeleton'
 import { BranchInfo, IGivenTicketsByBranchGraphItem } from './types/data.interface';
 
 const chartData = ref<IGivenTicketsByBranchGraphItem[]>([])
@@ -62,12 +64,12 @@ const startTimer = () => {
 onMounted(async () => {
   await fetchData();
   startTimer()
-  // intervalId = setInterval(() => {
-  //   if (!loading.value) {
-  //     fetchData().then(() => startTimer())
+  intervalId = setInterval(() => {
+    if (!loading.value) {
+      fetchData().then(() => startTimer())
 
-  //   }
-  // }, nextRequestTimeout);
+    }
+  }, nextRequestTimeout);
 });
 
 onUnmounted(() => {
@@ -79,14 +81,22 @@ onUnmounted(() => {
 
 <template>
   <Toaster />
+
   <div class="wrapper">
     <div>
       <p class="mb-4 border-2 rounded-md border-gray-400 w-fit p-2">Следующее обновление данных через: <span
           class="font-bold">{{ timer }}</span>
         сек.</p>
-      <p v-if="loading">Запрос отправляется...</p>
+      <div v-if="loading">
+        <div class="fixed top-0 left-0 h-screen w-screen flex justify-center items-center">
+          <VueSpinner size="50" color="red" class="mr-2" />
+          <p>Загрузка данных</p>
+        </div>
+        <Skeleton class="h-[400px] w-full rounded-lg mb-14" />
+        <Skeleton class="h-[600px] w-full rounded-lg mb-10" />
+      </div>
       <template v-else>
-        <MainChart class="mb-10" :chart-data="chartData" />
+        <MainChart class="mb-14" :chart-data="chartData" />
         <MainTable :tableData="tableData" />
       </template>
     </div>
@@ -95,6 +105,6 @@ onUnmounted(() => {
 
 <style scoped>
 .wrapper {
-  @apply max-w-screen-xl mx-auto mt-16 border p-6 rounded-lg shadow-sm;
+  @apply max-w-screen-xl mx-auto my-16 border p-6 rounded-lg shadow-sm;
 }
 </style>

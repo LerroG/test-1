@@ -18,6 +18,7 @@ const dataOutput = props.chartData.map(item => {
 </script>
 
 <template>
+
   <BarChart :margin="{ top: 15 }" index="BranchName" :num-ticks="dataOutput.length" :data="dataOutput"
     :categories="[ticketCount, ticketCountPercent]" :rounded-corners="4" :custom-tooltip="CustomChartTooltip" />
 </template>
